@@ -1,43 +1,46 @@
-#[aoc(day1, part1, Bytes)]
-pub fn part1_bytes(input: &[u8]) -> i32 {
-    input.iter().fold(0, |sum, c| match c {
-        b'(' => sum + 1,
-        b')' => sum - 1,
-        _ => unreachable!(),
-    })
-}
-
-#[aoc(day1, part1, Chars)]
-pub fn part1_chars(input: &str) -> i32 {
-    input.chars().fold(0, |sum, c| match c {
-        '(' => sum + 1,
-        ')' => sum - 1,
-        _ => unreachable!(),
-    })
-}
-
-#[aoc(day1, part2)]
-pub fn part2(input: &str) -> usize {
-    let mut sum: u32 = 0;
-
-    for (i, c) in input.as_bytes().iter().enumerate() {
-        match c {
-            b'(' => sum += 1,
-            b')' => if let Some(s) = sum.checked_sub(1) {
-                sum = s;
-            } else {
-                return i + 1;
-            },
-            _ => unreachable!(),
+#[aoc_generator(day1)]
+pub fn input_generator(input: &str) -> Vec<i32> {
+    let mut result = Vec::new();
+    let mut curr = 0;
+    for line in input.lines() {
+        let line = line.trim();
+        if line.is_empty() {
+            result.push(curr);
+            curr = 0;
+            continue;
         }
+        curr += line.parse::<i32>().unwrap();
     }
-
-    unreachable!()
+    result
 }
+
+#[aoc(day1, part1)]
+pub fn part1(input: &[i32]) -> i32 {
+    input.iter().fold(std::i32::MIN, |a,b| a.max(*b))
+}
+
+//#[aoc(day1, part2)]
+//pub fn part2(input: Vec<i32>) -> usize {
+//    let mut sum: u32 = 0;
+//
+//    for (i, c) in input.as_bytes().iter().enumerate() {
+//        match c {
+//            b'(' => sum += 1,
+//            b')' => if let Some(s) = sum.checked_sub(1) {
+//                sum = s;
+//            } else {
+//                return i + 1;
+//            },
+//            _ => unreachable!(),
+//        }
+//    }
+//
+//    unreachable!()
+//}
 
 #[cfg(test)]
 mod tests {
-    use super::{part1_chars as part1, part2};
+    use super::{part1, part2};
 
     // (()) and ()() both result in floor 0.
     #[test]
