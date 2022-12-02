@@ -16,7 +16,7 @@ pub fn input_generator(input: &str) -> Vec<i32> {
 
 #[aoc(day1, part1)]
 pub fn part1(input: &[i32]) -> i32 {
-    input.iter().fold(std::i32::MIN, |a,b| a.max(*b))
+    input.iter().fold(std::i32::MIN, |a, b| a.max(*b))
 }
 
 #[aoc(day1, part2)]
