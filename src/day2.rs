@@ -32,26 +32,28 @@ pub fn part1(input: &str) -> i32 {
     })
 }
 
+// X - Loss, 1
+// Y - Tie, 2
+// Z - Win, 3
 #[aoc(day2, part2)]
 pub fn part2(input: &str) -> i32 {
-    //let mut first = &std::i32::MIN;
-    //let mut second = &std::i32::MIN;
-    //let mut third = &std::i32::MIN;
-
-    //for x in input {
-    //    if x > first {
-    //        third = second;
-    //        second = first;
-    //        first = x;
-    //    } else if x > second {
-    //        third = second;
-    //        second = x;
-    //    } else if x > third {
-    //        third = x;
-    //    }
-    //}
-    //first + second + third
-    0
+    input.lines().fold(0, |acc, line| {
+        acc + match line.split(' ').collect::<Vec<&str>>()[..] {
+            [a, b] => match (a, b) {
+                ("A", "X") => LOSS + SCISSORS,
+                ("A", "Y") => TIE + ROCK,
+                ("A", "Z") => WIN + PAPER,
+                ("B", "X") => LOSS + ROCK,
+                ("B", "Y") => TIE + PAPER,
+                ("B", "Z") => WIN + SCISSORS,
+                ("C", "X") => LOSS + PAPER,
+                ("C", "Y") => TIE + SCISSORS,
+                ("C", "Z") => WIN + ROCK,
+                _ => panic!("Invalid play"),
+            },
+            _ => panic!("Invalid line"),
+        }
+    })
 }
 
 #[cfg(test)]
