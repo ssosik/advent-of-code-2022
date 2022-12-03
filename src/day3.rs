@@ -1,6 +1,7 @@
 use phf::phf_map;
+use std::collections::HashSet;
 
-static PRIORITIES: phf::Map<&'static char, u8> = phf_map! {
+static PRIORITIES: phf::Map<char, usize> = phf_map! {
     'a' => 1,
     'b' => 2,
     'c' => 3,
@@ -56,17 +57,23 @@ static PRIORITIES: phf::Map<&'static char, u8> = phf_map! {
 };
 
 #[aoc(day3, part1)]
-pub fn part1(input: &str) -> i32 {
-    let len = input.length()
-    //input.lines().fold(0, |acc, line| {
-    //    acc + match line.split(' ').collect::<Vec<&str>>()[..] {
-    //        [a, b] => match (a, b) {
-    //            ("A", "X") => 0,
-    //            _ => panic!("Invalid play"),
-    //        },
-    //        _ => panic!("Invalid line"),
-    //    }
-    //})
+pub fn part1(input: &str) -> usize {
+    input.lines().fold(0, |acc, line| {
+        let mut comp1_map = HashSet::new();
+        let mut comp2_map = HashSet::new();
+        let (compartment1, compartment2) = line.split_at(line.len() / 2);
+        for c in compartment1.chars() {
+            comp1_map.insert(c);
+        }
+        for c in compartment2.chars() {
+            comp2_map.insert(c);
+        }
+        let diff: Vec<&char> = comp1_map.intersection(&comp2_map).collect();
+        if diff.len() != 1 {
+            panic!("incorrect difference found");
+        }
+        acc + PRIORITIES.get(diff[0]).unwrap()
+    })
 }
 
 #[aoc(day3, part2)]
