@@ -1,6 +1,8 @@
 /*
 based on
 https://discourse.nixos.org/t/how-can-i-set-up-my-rust-programming-environment/4501/9
+https://nixos.wiki/wiki/Rust
+https://nixos.org/manual/nix/unstable/command-ref/nix-shell.html
 */
 let
   rust_overlay = import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz");
