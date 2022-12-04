@@ -78,40 +78,43 @@ pub fn part1(input: &str) -> usize {
 
 #[aoc(day3, part2)]
 pub fn part2(input: &str) -> usize {
-    input.lines().collect::<Vec<&str>>().chunks(3).fold(0, |acc, tup| {
-        let mut comp1_map = HashSet::new();
-        let mut comp2_map = HashSet::new();
-        let mut comp3_map = HashSet::new();
-        let (line_a, line_b, line_c) = match tup[..] {
-            [a, b, c] => (a, b, c),
-            _ => panic!()
-        };
-        for c in line_a.chars() {
-            comp1_map.insert(c);
-        }
-        for c in line_b.chars() {
-            comp2_map.insert(c);
-        }
-        for c in line_c.chars() {
-            comp3_map.insert(c);
-        }
-        //let common_item = comp1_map.intersection(&comp2_map).collect::<Vec<&char>>().intersection(&comp3_map).collect();
-        let mut diff1 = HashSet::new();
-        for c in comp1_map.intersection(&comp2_map).collect::<Vec<&char>>() {
-            diff1.insert(*c);
-        }
+    input
+        .lines()
+        .collect::<Vec<&str>>()
+        .chunks(3)
+        .fold(0, |acc, tup| {
+            let mut comp1_map = HashSet::new();
+            let mut comp2_map = HashSet::new();
+            let mut comp3_map = HashSet::new();
+            let (line_a, line_b, line_c) = match tup[..] {
+                [a, b, c] => (a, b, c),
+                _ => panic!(),
+            };
+            for c in line_a.chars() {
+                comp1_map.insert(c);
+            }
+            for c in line_b.chars() {
+                comp2_map.insert(c);
+            }
+            for c in line_c.chars() {
+                comp3_map.insert(c);
+            }
+            let mut diff1 = HashSet::new();
+            for c in comp1_map.intersection(&comp2_map).collect::<Vec<&char>>() {
+                diff1.insert(*c);
+            }
 
-        let mut diff2 = HashSet::new();
-        for c in comp2_map.intersection(&comp3_map).collect::<Vec<&char>>() {
-            diff2.insert(*c);
-        }
+            let mut diff2 = HashSet::new();
+            for c in comp2_map.intersection(&comp3_map).collect::<Vec<&char>>() {
+                diff2.insert(*c);
+            }
 
-        let diff: Vec<&char> = diff1.intersection(&diff2).collect();
-        if diff.len() != 1 {
-            panic!("incorrect difference found");
-        }
-        acc + PRIORITIES.get(diff[0]).unwrap()
-    })
+            let diff: Vec<&char> = diff1.intersection(&diff2).collect();
+            if diff.len() != 1 {
+                panic!("incorrect difference found");
+            }
+            acc + PRIORITIES.get(diff[0]).unwrap()
+        })
 }
 
 #[cfg(test)]
