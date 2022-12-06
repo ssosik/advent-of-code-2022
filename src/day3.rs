@@ -119,7 +119,6 @@ pub fn part2(input: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use super::{part1, part2};
 
     //// (()) and ()() both result in floor 0.
     //#[test]

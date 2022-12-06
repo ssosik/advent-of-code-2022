@@ -86,13 +86,12 @@ pub fn part1(lines: &Input) -> String {
 }
 
 //#[aoc(day5, part2)]
-pub fn part2(input: &Input) -> String {
+pub fn part2(_input: &Input) -> String {
     "nope".into()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{part1, part2};
 
     //// (()) and ()() both result in floor 0.
     //#[test]
