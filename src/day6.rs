@@ -37,6 +37,7 @@ impl StartMessageMarker {
         Self([None; 14])
     }
     fn is_all_unique(&self) -> bool {
+        // If any of the items are None we don't have enough input yet, FALSE
         if any(self.0, |item| item.is_none()) {
             return false;
         }
