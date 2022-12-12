@@ -1,10 +1,17 @@
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Debug, Default, Clone)]
 pub struct Instruction {
     total: u8,
     from: u8,
     to: u8,
+}
+
+impl fmt::Display for Instruction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "move {} from {} to {}", self.total, self.from, self.to)
+    }
 }
 
 #[derive(Debug, Default, Clone)]
@@ -89,6 +96,17 @@ enum ReadingInputSection {
 //    })
 //}
 
+pub fn print_stacks(stacks: &HashMap<u8, Vec<char>>) {
+    for i in 1..=9 {
+        let mut line = format!("{i}: ");
+        for c in &stacks[&i] {
+            line.push_str(&format!("[{c}] "));
+        }
+        println!("{line}")
+    }
+    println!();
+}
+
 #[aoc(day5, part1)]
 pub fn part1(lines: &str) -> String {
     let mut reading_section = ReadingInputSection::InitialStacks;
@@ -108,7 +126,7 @@ pub fn part1(lines: &str) -> String {
                                 dbg!(c, col);
                                 stacks
                                     .entry(col)
-                                    .and_modify(|l| l.push(c))
+                                    .and_modify(|l| l.insert(0, c))
                                     .or_insert(vec![c]);
                             }
                             _ => {
@@ -136,25 +154,31 @@ pub fn part1(lines: &str) -> String {
 
         (stacks, instructions)
     });
+    
+    //dbg!(stacks);
+    println!("Initial");
+    print_stacks(&stacks);
 
     for instruction in &instructions {
-        dbg!(instruction);
+        println!("Instruction {instruction}");
         let mut to = stacks[&instruction.to].clone();
         let mut from = stacks[&instruction.from].clone();
         for i in 0..instruction.total {
-            let item = from.remove(0);
-            dbg!(i, item);
+            let item = from.pop().unwrap();
+            //dbg!(i, item);
             to.push(item);
         }
         stacks.insert(instruction.to, to);
         stacks.insert(instruction.from, from);
+        print_stacks(&stacks);
     }
     let mut s = String::from("");
     for i in 1..=9 {
-        s.push(stacks[&i].clone().remove(0));
+        //s.push(stacks[&i].clone().remove(0));
+        s.push(stacks[&i].clone().pop().unwrap());
     }
-    dbg!(stacks);
-    dbg!(s);
+    //dbg!(stacks);
+    println!("Answer {s}");
 
     "nope".to_string()
 }
