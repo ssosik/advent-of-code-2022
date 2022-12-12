@@ -129,7 +129,7 @@ pub fn part1(lines: &str) -> String {
                                     stacks
                                         .entry(col)
                                         .and_modify(|l| l.insert(0, c))
-                                        .or_insert(vec![c]);
+                                        .or_insert_with(|| vec![c]);
                                 }
                                 _ => {
                                     println!("unparseable {item:?} {col}");
@@ -205,7 +205,7 @@ pub fn part2(lines: &str) -> String {
                                     stacks
                                         .entry(col)
                                         .and_modify(|l| l.insert(0, c))
-                                        .or_insert(vec![c]);
+                                        .or_insert_with(|| vec![c]);
                                 }
                                 _ => {
                                     println!("unparseable {item:?} {col}");
