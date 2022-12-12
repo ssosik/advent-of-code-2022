@@ -111,50 +111,53 @@ pub fn print_stacks(stacks: &HashMap<u8, Vec<char>>) {
 pub fn part1(lines: &str) -> String {
     let mut reading_section = ReadingInputSection::InitialStacks;
 
-    let (mut stacks, mut instructions) = lines.lines().fold((HashMap::new(), Vec::new()), |(mut stacks, mut instructions): (HashMap<u8, Vec<char>>, Vec<Instruction>), line| {
-        match reading_section {
-            ReadingInputSection::InitialStacks => {
-                line.chars()
-                    .collect::<Vec<_>>()
-                    .chunks(4)
-                    .fold(1, |col, item| {
-                        match item[..] {
-                            [' ', ' ', ' ', ' '] | [' ', ' ', ' '] => {
-                                println!("empty col {col}");
+    let (mut stacks, instructions) = lines.lines().fold(
+        (HashMap::new(), Vec::new()),
+        |(mut stacks, mut instructions): (HashMap<u8, Vec<char>>, Vec<Instruction>), line| {
+            match reading_section {
+                ReadingInputSection::InitialStacks => {
+                    line.chars()
+                        .collect::<Vec<_>>()
+                        .chunks(4)
+                        .fold(1, |col, item| {
+                            match item[..] {
+                                [' ', ' ', ' ', ' '] | [' ', ' ', ' '] => {
+                                    println!("empty col {col}");
+                                }
+                                ['[', c, ']', ' '] | ['[', c, ']'] => {
+                                    dbg!(c, col);
+                                    stacks
+                                        .entry(col)
+                                        .and_modify(|l| l.insert(0, c))
+                                        .or_insert(vec![c]);
+                                }
+                                _ => {
+                                    println!("unparseable {item:?} {col}");
+                                    reading_section = ReadingInputSection::StackNumbers;
+                                }
                             }
-                            ['[', c, ']', ' '] | ['[', c, ']'] => {
-                                dbg!(c, col);
-                                stacks
-                                    .entry(col)
-                                    .and_modify(|l| l.insert(0, c))
-                                    .or_insert(vec![c]);
-                            }
-                            _ => {
-                                println!("unparseable {item:?} {col}");
-                                reading_section = ReadingInputSection::StackNumbers;
-                            }
-                        }
-                        col + 1
-                    });
-            }
-            ReadingInputSection::StackNumbers => {
-                reading_section = ReadingInputSection::Moves;
-                //skip
-            }
-            ReadingInputSection::Moves => {
-                let line = line.split(' ').collect::<Vec<&str>>();
-                let instruction = Instruction {
-                    total: line[1].parse().unwrap(),
-                    from: line[3].parse().unwrap(),
-                    to: line[5].parse().unwrap(),
-                };
-                instructions.push(instruction);
-            }
-        };
+                            col + 1
+                        });
+                }
+                ReadingInputSection::StackNumbers => {
+                    reading_section = ReadingInputSection::Moves;
+                    //skip
+                }
+                ReadingInputSection::Moves => {
+                    let line = line.split(' ').collect::<Vec<&str>>();
+                    let instruction = Instruction {
+                        total: line[1].parse().unwrap(),
+                        from: line[3].parse().unwrap(),
+                        to: line[5].parse().unwrap(),
+                    };
+                    instructions.push(instruction);
+                }
+            };
 
-        (stacks, instructions)
-    });
-    
+            (stacks, instructions)
+        },
+    );
+
     //dbg!(stacks);
     println!("Initial");
     print_stacks(&stacks);
@@ -163,7 +166,7 @@ pub fn part1(lines: &str) -> String {
         println!("Instruction {instruction}");
         let mut to = stacks[&instruction.to].clone();
         let mut from = stacks[&instruction.from].clone();
-        for i in 0..instruction.total {
+        for _i in 0..instruction.total {
             let item = from.pop().unwrap();
             //dbg!(i, item);
             to.push(item);
@@ -177,15 +180,81 @@ pub fn part1(lines: &str) -> String {
         //s.push(stacks[&i].clone().remove(0));
         s.push(stacks[&i].clone().pop().unwrap());
     }
-    //dbg!(stacks);
-    println!("Answer {s}");
-
-    "nope".to_string()
+    s
 }
 
-//#[aoc(day5, part2)]
-pub fn part2(_input: &Input) -> String {
-    "nope".into()
+#[aoc(day5, part2)]
+pub fn part2(lines: &str) -> String {
+    let mut reading_section = ReadingInputSection::InitialStacks;
+
+    let (mut stacks, instructions) = lines.lines().fold(
+        (HashMap::new(), Vec::new()),
+        |(mut stacks, mut instructions): (HashMap<u8, Vec<char>>, Vec<Instruction>), line| {
+            match reading_section {
+                ReadingInputSection::InitialStacks => {
+                    line.chars()
+                        .collect::<Vec<_>>()
+                        .chunks(4)
+                        .fold(1, |col, item| {
+                            match item[..] {
+                                [' ', ' ', ' ', ' '] | [' ', ' ', ' '] => {
+                                    println!("empty col {col}");
+                                }
+                                ['[', c, ']', ' '] | ['[', c, ']'] => {
+                                    dbg!(c, col);
+                                    stacks
+                                        .entry(col)
+                                        .and_modify(|l| l.insert(0, c))
+                                        .or_insert(vec![c]);
+                                }
+                                _ => {
+                                    println!("unparseable {item:?} {col}");
+                                    reading_section = ReadingInputSection::StackNumbers;
+                                }
+                            }
+                            col + 1
+                        });
+                }
+                ReadingInputSection::StackNumbers => {
+                    reading_section = ReadingInputSection::Moves;
+                    //skip
+                }
+                ReadingInputSection::Moves => {
+                    let line = line.split(' ').collect::<Vec<&str>>();
+                    let instruction = Instruction {
+                        total: line[1].parse().unwrap(),
+                        from: line[3].parse().unwrap(),
+                        to: line[5].parse().unwrap(),
+                    };
+                    instructions.push(instruction);
+                }
+            };
+
+            (stacks, instructions)
+        },
+    );
+
+    println!("Initial");
+    print_stacks(&stacks);
+
+    for instruction in &instructions {
+        println!("Instruction {instruction}");
+        let mut to = stacks[&instruction.to].clone();
+        let mut from = stacks[&instruction.from].clone();
+        let x = from.len() - instruction.total as usize;
+        for _i in 0..instruction.total {
+            let item = from.remove(x);
+            to.push(item);
+        }
+        stacks.insert(instruction.to, to);
+        stacks.insert(instruction.from, from);
+        print_stacks(&stacks);
+    }
+    let mut s = String::from("");
+    for i in 1..=9 {
+        s.push(stacks[&i].clone().pop().unwrap());
+    }
+    s
 }
 
 #[cfg(test)]
