@@ -1,4 +1,5 @@
-use std::collections::HashSet;
+use itertools::FoldWhile::{Continue, Done};
+use itertools::Itertools;
 
 #[derive(Default)]
 pub struct Quad(Option<char>, Option<char>, Option<char>, Option<char>);
@@ -9,7 +10,10 @@ impl Quad {
     }
     fn start_of_packet(&self) -> bool {
         match self {
-            Quad(None, _, _, _) | Quad(_, None, _, _) | Quad(_, _, None, _) | Quad(_, _, _, None) => false,
+            Quad(None, _, _, _)
+            | Quad(_, None, _, _)
+            | Quad(_, _, None, _)
+            | Quad(_, _, _, None) => false,
             Quad(a, b, c, d) if a == b || b == c || c == d || a == c || a == d || b == d => false,
             _ => true,
         }
@@ -25,10 +29,18 @@ impl Quad {
 #[aoc(day6, part1)]
 pub fn part1(input: &str) -> usize {
     //input.chars().for_each(|x| println!("{x}"));
-    let (i, _) = input.chars().fold((1, Quad::new()), |(i, quad), next| {
-        println!("{i}: {next}");
-        (i + 1, quad)
-    });
+    let (i, _) = input
+        .chars()
+        .fold_while((1, Quad::new()), |(i, mut quad), next| {
+            println!("{i}: {next}");
+            quad.add(next);
+            if quad.start_of_packet() {
+                Done((i, quad))
+            } else {
+                Continue((i + 1, quad))
+            }
+        })
+        .into_inner();
     i
 }
 
